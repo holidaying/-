@@ -1,0 +1,145 @@
+window.fullScreen = function(flag) {
+            var userAgent = navigator.userAgent;
+            var isOpera = userAgent.indexOf("Opera") > -1;
+            // if (userAgent.indexOf("Chrome") > -1){
+            //   var el = document.documentElement;
+            //   var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+            //   if (typeof rfs != "undefined" && rfs) {
+            //            rfs.call(el);
+            //       } else if(typeof window.ActiveXObject != "undefined"){
+            //            var wscript = new ActiveXObject("WScript.Shell");
+            //            if (wscript!=null) {
+            //              wscript.SendKeys("{F11}");
+            //       }
+            //   }
+            // }
+            //else if(userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera){
+            if (userAgent.indexOf("Chrome") > -1) {
+                var el = document.documentElement;
+                var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+                if (typeof rfs != "undefined" && rfs) {
+                    rfs.call(el);
+                } else if (typeof window.ActiveXObject != "undefined") {
+                    var wscript = new ActiveXObject("WScript.Shell");
+                    if (wscript != null) {
+                        wscript.SendKeys("{F11}");
+                    }
+                }
+            } else {
+                var WshShell = new ActiveXObject('WScript.Shell');
+                WshShell.SendKeys('{F11}');
+            }
+
+            // }
+        }
+        // 分页加载
+    window.pageLoad = function(scolldom, fixdom) {
+            scolldom = scolldom || ".view"; //滚动对象
+            fixdom = fixdom || ".itemFixed"; //悬浮div
+            $(scolldom).scroll(function(event) {
+                console.log();
+                if ($(fixdom).offset().top <= 0 && !$(fixdom).hasClass("fixToTop")) {
+                    $(fixdom).addClass("fixToTop");
+                } else if ($(scolldom).scrollTop() == 0) {
+                    $(fixdom).removeClass("fixToTop");
+                }
+            });
+        }
+        //判断对象是否为空
+    window.isEmpty = function(value) {
+        return (Array.isArray(value) && value.length === 0) || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
+    }
+    window.isCnNewID = function(cid) {
+        var arrExp = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //加权因子  
+        var arrValid = [1, 0, "X", 9, 8, 7, 6, 5, 4, 3, 2]; //校验码 
+        if (/^\d{17}\d|x$/i.test(cid) && cid.length === 18) {
+            var sum = 0,
+                idx;
+            for (var i = 0; i < cid.length - 1; i++) {
+                // 对前17位数字与权值乘积求和  
+                sum += parseInt(cid.substr(i, 1), 10) * arrExp[i];
+            }
+            // 计算模（固定算法）  
+            idx = sum % 11;
+            // 检验第18为是否与校验码相等  
+            return arrValid[idx] == cid.substr(17, 1).toUpperCase();
+        } else if (cid.length === 15) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    //通过身份证取得生日
+    window.getBirthdatByIdNo = function(iIdNo) {
+            var tmpStr = "";
+            var strReturn = "";
+            if (iIdNo.length == 15) {
+                // tmpStr = iIdNo.substring(6, 12);
+                // tmpStr = "19" + tmpStr;
+                // tmpStr = tmpStr.substring(0, 4) + "-" + tmpStr.substring(4, 6) + "-" + tmpStr.substring(6)
+                return true;
+            } else {
+                tmpStr = iIdNo.substring(6, 14);
+                tmpStr = tmpStr.substring(0, 4) + "-" + tmpStr.substring(4, 6) + "-" + tmpStr.substring(6)
+                return tmpStr;
+            }
+        }
+        //检测特殊字符
+    window.stripscript = function(str) {
+        var pattern = /[`~!@#\$%\^\&\*\(\)_——\-\+<>\?:"\{\},\.\\\/;'\[\]]/im;
+        if (pattern.test(str)) {
+            return false;
+        }
+        return true;
+    }
+    window.getNextMonth = function(date) {
+        var arr = date.split('-');
+        var year = arr[0]; //获取当前日期的年份
+        var month = arr[1]; //获取当前日期的月份
+        var day = arr[2]; //获取当前日期的日
+        var days = new Date(year, month, 0);
+        days = days.getDate(); //获取当前日期中的月的天数
+        var year2 = year;
+        var month2 = parseInt(month) + 1;
+        if (month2 == 13) {
+            year2 = parseInt(year2) + 1;
+            month2 = 1;
+        }
+        var day2 = day;
+        var days2 = new Date(year2, month2, 0);
+        days2 = days2.getDate();
+        if (day2 > days2) {
+            day2 = days2;
+        }
+        if (month2 < 10) {
+            month2 = '0' + month2;
+        }
+        var t2 = year2 + '-' + month2;
+        return t2;
+    }
+    window.timeTransform=function(value) {
+        var data = new Date(value);
+        var year = data.getFullYear();
+        var month = data.getMonth() >= 9 ? (data.getMonth() + 1).toString() : '0' + (data.getMonth() + 1);
+        var day = data.getDate() > 9 ? data.getDate().toString() : '0' + data.getDate();
+        var hours = data.getHours() > 9 ? data.getHours().toString() : '0' + data.getHours();
+        var minutes = data.getMinutes() > 9 ? data.getMinutes().toString() : '0' + data.getMinutes();
+        var ss = data.getSeconds() > 9 ? data.getSeconds().toString() : '0' + data.getSeconds();
+             value = year + "-" + month + "-" + day;
+        return  value;
+    },
+    window.timeTransformHMS=function(value) {
+        if(value=="")
+        {
+            return "--";
+        }
+        var data = new Date(value);
+        var year = data.getFullYear();
+        var month = data.getMonth() >= 9 ? (data.getMonth() + 1).toString() : '0' + (data.getMonth() + 1);
+        var day = data.getDate() > 9 ? data.getDate().toString() : '0' + data.getDate();
+        var hours = data.getHours() > 9 ? data.getHours().toString() : '0' + data.getHours();
+        var minutes = data.getMinutes() > 9 ? data.getMinutes().toString() : '0' + data.getMinutes();
+        var ss = data.getSeconds() > 9 ? data.getSeconds().toString() : '0' + data.getSeconds();
+             value = year + "-" + month + "-" + day+" " + hours + ":" + minutes + ":" + ss;
+        return  value;
+    }
